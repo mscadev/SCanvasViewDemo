@@ -92,7 +92,9 @@ public class SPen_Example_BasicUI extends Activity {
 
         // Add SCanvasView under minSDK 10(AndroidManifext.xml) for preventing text input error
         mSCanvas = new SCanvasView(mContext);
-        mSCanvas.addedByResizingContainer(mCanvasContainer);
+        if ((mSCanvas != null)
+        		 && (mSCanvas.getCanvasDrawable() == true)) { //Hack : Is SDraw engine supported ?
+        	mSCanvas.addedByResizingContainer(mCanvasContainer);
        
         //------------------------------------
         // SettingView Setting
@@ -117,11 +119,14 @@ public class SPen_Example_BasicUI extends Activity {
         mSCanvas.setSCanvasInitializeListener(new SCanvasInitializeListener() {
             @Override
             public void onInitialized() { 
-                //--------------------------------------------
+            	if (mSCanvas.getCanvasDrawable() == true) {
+            		Toast.makeText(mContext, "SDraw Engine Available", Toast.LENGTH_LONG).show();
+            	
+            	//--------------------------------------------
                 // Start SCanvasView/CanvasView Task Here
                 //--------------------------------------------
                 // Application Identifier Setting
-                if(!mSCanvas.setAppID(APPLICATION_ID_NAME, APPLICATION_ID_VERSION_MAJOR, APPLICATION_ID_VERSION_MINOR,APPLICATION_ID_VERSION_PATCHNAME))
+            	if(!mSCanvas.setAppID(APPLICATION_ID_NAME, APPLICATION_ID_VERSION_MAJOR, APPLICATION_ID_VERSION_MINOR,APPLICATION_ID_VERSION_PATCHNAME))
                     Toast.makeText(mContext, "Fail to set App ID.", Toast.LENGTH_LONG).show();
 
                 // Set Title
@@ -133,6 +138,7 @@ public class SPen_Example_BasicUI extends Activity {
 
                 // Update button state
                 updateModeState();
+            	} 
             }
         });
 
@@ -172,11 +178,12 @@ public class SPen_Example_BasicUI extends Activity {
         mUndoBtn.setEnabled(false);
         mRedoBtn.setEnabled(false);
         mPenBtn.setSelected(true);
-
+        
         // Caution:
         // Do NOT load file or start animation here because we don't know canvas size here.
         // Start such SCanvasView Task at onInitialized() of SCanvasInitializeListener
-        }
+        } // end of if if (mSCanvas != null &&
+      }
     }
     
     @Override
